@@ -6,14 +6,16 @@ const port = 3001;
 const cors = require('cors');
 app.use(cors());
 
+let result = [];
+function Movies(title, posterPath, overview) {
+    this.title = title;
+    this.posterPath = posterPath;
+    this.overview = overview;
+    result.push(this);
+}
+
 app.get('/', (req, res) => {
-    let result = [];
-    function Movies(title, posterPath, overview) {
-        this.title = title;
-        this.posterPath = posterPath;
-        this.overview = overview;
-        result.push(this);
-    }
+ 
     let movie = new Movies(data.title, data.poster_path, data.overview);
     res.json(movie);
 })
