@@ -5,7 +5,7 @@
 
 ## WRRC
 ![WRRC](./Images/WRRC.JPG)
-
+![3rd Party WRRC](./Images/3rdPartyWRRC.JPG)
 
 ## Overview
 - The purpous of this repo is to build a movie app that can check the latest movies based on categories.
@@ -15,3 +15,7 @@
 
 ## Project Features
 1. Favourite Movies Page
+2. Search Page
+3. Trending Page
+4. Companies Page
+5. Review Page
