@@ -6,7 +6,7 @@
 ## WRRC
 ![WRRC](./Images/WRRC.JPG)
 ![3rd Party WRRC](./Images/3rdPartyWRRC.JPG)
-![DataBase WRRC](DataBase.jpg)
+![DataBase WRRC](./Images/DataBase.jpg)
 
 ## Overview
 - The purpous of this repo is to build a movie app that can check the latest movies based on categories.
