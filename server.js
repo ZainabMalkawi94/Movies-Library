@@ -1,12 +1,15 @@
 'use strict'
+
 require("dotenv").config();
+const pg = require("pg");
+const client = new pg.Client(process.env.DATABASE_URL);
 const express = require('express');
 const data = require('./Movie Data/data.json');
 const app = express();
 const axios = require("axios");
 const cors = require('cors');
 app.use(cors());
-
+app.use(express.json());
 const moviesKey = process.env.API_KEY;
 const port = process.env.PORT;
 
@@ -26,6 +29,8 @@ app.get('/trending', handleTrending);
 app.get('/search', handleSearch);
 app.get('/companies', handleCompanies)
 app.get('/reviews', handleReviews)
+app.get('/getMovies',handleGetMovies);
+app.post("/addMovie", addMovieHandler);
 
 
 
@@ -47,7 +52,7 @@ async function handleTrending(req, res) {
 
     let moviesFromAPI = await axios.get(url);
     let movies = moviesFromAPI.data.results.map((item) => {
-        return new Movies(item.id, item.title, item.release_date, item.poster_path, item.overview);
+        return new Movies(item.id, item.title, item.releasedate, item.posterpath, item.overview);
     })
     res.send(movies);
 
@@ -78,15 +83,6 @@ async function handleCompanies(req, res) {
 
 }
 
-// function MoviesReview(id, author,url, rating, date, content) {
-//     this.id = id;
-//     this.author = author;
-//     this.url = url;
-//     this.rating = rating;
-//     this.date = date;
-//     this.content = content;
-//     // result.push(this);
-// }
 
 async function handleReviews(req, res) {
     const reviewId = req.query.reviewId;// try this: 58aa82f09251416f92006a3a 
@@ -95,6 +91,34 @@ async function handleReviews(req, res) {
     // let review = new MoviesReview(reviewData.data.id, reviewData.data.author, reviewData.data.url,reviewData.data.rating,reviewData.data.content,reviewData.data.date);
     res.send(reviewData.data);
 
+}
+
+function handleGetMovies(req, res) {
+    const sql = 'select * from topmovies;';
+    client.query(sql)
+        .then((data) => {
+            let dataFromDB = data.rows.map((item) => {
+                let singleMovie = new Movies(
+                    item.id,
+                    item.title,
+                    item.releasedate,
+                    item.posterpath,
+                    item.overview
+                )
+                return singleMovie;
+            });
+            res.send(dataFromDB);
+        })
+}
+
+function addMovieHandler(req, res) {
+    const movie = req.body;
+    const sql = `INSERT into topmovies (title, releasedate, posterpath, overview) values ($1,$2,$3,$4) RETURNING *;`;
+    const values = [movie.title, movie.release_date, movie.poster_path, movie.overview];
+    client.query(sql, values).then((data) => {
+        res.send(data.rows);
+        //res.send("Adding succ");
+    })
 }
 
 
@@ -110,7 +134,8 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something went wrong!')
 })
 
-app.listen(port, () => {
-    console.log(`server is listing on port ${port}`);
-
-})
+client.connect().then(() => {
+    app.listen(port, () => {
+        console.log('ready and listen on port', port);
+    });
+});
