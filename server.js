@@ -29,9 +29,11 @@ app.get('/trending', handleTrending);
 app.get('/search', handleSearch);
 app.get('/companies', handleCompanies)
 app.get('/reviews', handleReviews)
-app.get('/getMovies',handleGetMovies);
+app.get('/getMovies', handleGetMovies);
 app.post("/addMovie", addMovieHandler);
-
+app.delete("/DELETE/:id", deleteMoviesHandler);
+app.put("/UPDATE/:id", updateMoviesHandler);
+app.get('/getMovie/:id', handleGetMovie);
 
 
 // handlers
@@ -120,8 +122,35 @@ function addMovieHandler(req, res) {
         //res.send("Adding succ");
     })
 }
+function updateMoviesHandler(req, res) {
+    const id = req.params.id;
+    const sql = `update topmovies set title=$1,releasedate=$2,posterpath=$3,overview=$4 where id=${id} returning *`;
+    const values = [req.body.title, req.body.releasedate, req.body.posterpath, req.body.overview];
+    client.query(sql, values)
+        .then((data) => {
+            res.status(200).send(data.rows);
+        })
+}
 
+function deleteMoviesHandler(req, res) {
+    // http://localhost:3001/DELETE/anyNumber(related to id)
+    const movieId = req.params.id;
+    const sql = `delete from topmovies where id = ${movieId}`;
+    client.query(sql)
+        .then((data) => {
+            if (data)
+                res.status(202).send('deleted');
+        })
+}
 
+function handleGetMovie(req, res) {
+    const movieId = req.params.id;
+    const sql = `select * from topmovies  where id=${movieId}`;
+    client.query(sql)
+        .then((data) => {
+            res.status(200).send(data.rows);
+        })
+}
 app.use((req, res) => {
     res.status(404).send('Page Not Found Error');
 });
