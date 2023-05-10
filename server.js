@@ -184,5 +184,5 @@ client.connect().then(() => {
     });
 })
 .catch((error) => {
-    res.status(500).send(error, "error");
+    console.log(error);
 });
