@@ -111,6 +111,9 @@ function handleGetMovies(req, res) {
             });
             res.send(dataFromDB);
         })
+        .catch((error) => {
+            res.status(500).send(error, "error");
+        });
 }
 
 function addMovieHandler(req, res) {
@@ -121,6 +124,9 @@ function addMovieHandler(req, res) {
         res.send(data.rows);
         //res.send("Adding succ");
     })
+    .catch((error) => {
+        res.status(500).send(error, "error");
+    });
 }
 function updateMoviesHandler(req, res) {
     const id = req.params.id;
@@ -130,6 +136,9 @@ function updateMoviesHandler(req, res) {
         .then((data) => {
             res.status(200).send(data.rows);
         })
+        .catch((error) => {
+            res.status(500).send(error, "error");
+        });
 }
 
 function deleteMoviesHandler(req, res) {
@@ -141,6 +150,9 @@ function deleteMoviesHandler(req, res) {
             if (data)
                 res.status(202).send('deleted');
         })
+        .catch((error) => {
+            res.status(500).send(error, "error");
+        });
 }
 
 function handleGetMovie(req, res) {
@@ -150,6 +162,9 @@ function handleGetMovie(req, res) {
         .then((data) => {
             res.status(200).send(data.rows);
         })
+        .catch((error) => {
+            res.status(500).send(error, "error");
+        });
 }
 app.use((req, res) => {
     res.status(404).send('Page Not Found Error');
@@ -167,4 +182,7 @@ client.connect().then(() => {
     app.listen(port, () => {
         console.log('ready and listen on port', port);
     });
+})
+.catch((error) => {
+    res.status(500).send(error, "error");
 });
